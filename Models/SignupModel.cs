@@ -24,4 +24,3 @@ namespace ASJewellers.Models
     }
 }
 
-
