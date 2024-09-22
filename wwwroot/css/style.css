@@ -1,1 +1,43 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #000;
+    color: #fff;
+    margin: 0;
+    padding: 0;
+}
+
+h2 {
+    color: #ffd700; /* Gold */
+}
+
+form {
+    width: 300px;
+    margin: 0 auto;
+}
+
+form div {
+    margin-bottom: 10px;
+}
+
+form label {
+    display: block;
+    color: #c0c0c0; /* Silver */
+}
+
+form input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #c0c0c0; /* Silver */
+    background-color: #333;
+    color: #fff;
+}
+
+button {
+    padding: 10px;
+    background-color: #ffd700; /* Gold */
+    border: none;
+    width: 100%;
+    color: #000;
+    font-weight: bold;
+}
 
