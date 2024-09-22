@@ -1,1 +1,28 @@
+@model IEnumerable<ASJewellers.Models.Product>
+
+<h2>Manage Products</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var product in Model)
+        {
+            <tr>
+                <td>@product.Name</td>
+                <td>@product.Price</td>
+                <td>
+                    <form asp-action="RemoveProduct" method="post">
+                        <input type="hidden" name="id" value="@product.Id" />
+                        <button type="submit">Remove</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
 
