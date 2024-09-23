@@ -1,30 +1,35 @@
 using Microsoft.AspNetCore.Mvc;
-using ASJewellers.Models;
-using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using jeweller_app.Models;
+using System.Threading.Tasks;
 
-public class HomeController : Controller
+namespace jeweller_app.Controllers
 {
-    private readonly ApplicationDbContext _context;
-
-    public HomeController(ApplicationDbContext context)
+    public class DashboardController : Controller
     {
-        _context = context;
-    }
+        private readonly ApplicationDbContext _context;
 
-    public IActionResult Index()
-    {
-        var products = _context.Products.Take(10).ToList();
-        return View(products);
-    }
+        public DashboardController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
 
-    public IActionResult About()
-    {
-        return View();
-    }
+        public async Task<IActionResult> Index()
+        {
+            // Calculate total sales, orders, and products in stock
+            decimal totalSales = await _context.Orders.SumAsync(o => o.TotalAmount);
+            int totalOrders = await _context.Orders.CountAsync();
+            int totalProducts = await _context.Products.SumAsync(p => (int)p.Stock);
 
-    public IActionResult Contact()
-    {
-        return View();
+            // Pass the data to the view using a model
+            var metrics = new DashboardMetrics
+            {
+                TotalSales = totalSales,
+                TotalOrders = totalOrders,
+                TotalProducts = totalProducts
+            };
+
+            return View(metrics);
+        }
     }
 }
-
