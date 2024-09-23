@@ -1,34 +1,46 @@
+using jeweller_app.Models;
 using Microsoft.AspNetCore.Mvc;
-using ASJewellers.Models;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace ASJewellers.Controllers
+namespace jeweller_app.Controllers
 {
-    public class LoginController : Controller
+    [ApiController]
+    [Route("api/[controller]")]
+    public class LoginController : ControllerBase
     {
-        [HttpGet]
-        public IActionResult Login()
+        private readonly ApplicationDbContext _context;
+
+        public LoginController(ApplicationDbContext context)
         {
-            return View();
+            _context = context;
+        }
+
+        private string HashPassword(string password)
+        {
+            byte[] bytes = SHA256.HashData(Encoding.UTF8.GetBytes(password));
+            StringBuilder builder = new StringBuilder();
+            foreach (byte b in bytes)
+            {
+                builder.Append(b.ToString("x2"));
+            }
+            return builder.ToString();
         }
 
         [HttpPost]
-        public IActionResult Login(LoginModel model)
+        public async Task<IActionResult> Login([FromBody] LoginRequest loginRequest)
         {
-            if (ModelState.IsValid)
+            string hashedPassword = HashPassword(loginRequest.PasswordHash);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == loginRequest.Username && u.PasswordHash == hashedPassword);
+
+            if (user == null)
             {
-                // Check the credentials (this is where you'd query the database)
-                if (model.Username == "admin" && model.Password == "password")
-                {
-                    // Redirect to home page or admin dashboard if credentials are correct
-                    return RedirectToAction("Index", "Home");
-                }
-                else
-                {
-                    ModelState.AddModelError("", "Invalid username or password");
-                }
+                return Unauthorized("Invalid username or password.");
             }
-            return View(model);
+
+            return Ok("Login successful!");
         }
     }
 }
-
